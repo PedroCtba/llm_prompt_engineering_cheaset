@@ -30,7 +30,7 @@ Exemplo:
 - Forneceu os passos sequencialmente
 - Fechou o escopo da resposta dizendo que queria uma análise limitada a 300 palavras
 
-# 3. Use exemplos (Multishot prompting)
+# 2. Use exemplos (Multishot prompting)
 
 Fornecendo exemplos bem montados de como você quer sua resposta, a necessidade de muito texto explicativo é dramaticamente reduzida, e a performance do modelo também melhora.
 
@@ -47,7 +47,7 @@ Seus exemplos devem ser:
 | Usuário | Analise este feedback de cliente e categorize os problemas. Use estas categorias: Interface, Desempenho, Solicitação de Recurso, Integração, Preço e Outros. Também avalie o sentimento (Positivo/Neutro/Negativo) e a prioridade (Alta/Média/Baixa). Aqui está o feedback: {{FEEDBACK}} | Nossa equipe de atendimento está sobrecarregada com feedbacks não estruturados. Sua tarefa é analisar o feedback e categorizar problemas para nossas equipes de produto e engenharia. Use estas categorias: Interface, Desempenho, Solicitação de Recurso, Integração, Preço e Outros. Também avalie o sentimento (Positivo/Neutro/Negativo) e a prioridade (Alta/Média/Baixa). Aqui está um exemplo:<exemplo>Entrada: O novo aplicativo de entrega é horrível! Demora uma eternidade para carregar o cardápio e não consigo encontrar o botão de rastreamento do pedido. Resolvam isso urgentemente!Categoria: Interface, DesempenhoSentimento: NegativoPrioridade: Alta</exemplo>Agora, analise este feedback: {{FEEDBACK}} |
 | Assistente (resposta do Claude) | Aqui está a análise do feedback do cliente:Problema: InterfaceSentimento: NegativoPrioridade: AltaO cliente está frustrado com o novo design do aplicativo, que considera confuso e lento para carregar. Eles mencionam especificamente a falta do botão de "rastreamento", que provavelmente é um recurso crítico. Este problema precisa ser abordado com alta prioridade.Problema: IntegraçãoSentimento: PositivoPrioridade: MédiaO cliente está satisfeito com a integração existente com o iFood, mas gostaria de ver suporte para o Rappi também. Esta é uma solicitação de recurso que poderia ser considerada para uma atualização futura do produto.Problema: PreçoSentimento: NegativoPrioridade: AltaO cliente acha o preço das entregas irrazoável, especialmente para pedidos pequenos. Eles estão ameaçando mudar para um concorrente, então este é um problema de alta prioridade que precisa ser revisto.Problema: DesempenhoSentimento: NegativoPrioridade: AltaO cliente está enfrentando problemas críticos com o aplicativo móvel, onde pedidos grandes resultam consistentemente em travamentos. Este é um problema significativo que afeta a capacidade do cliente de usar o produto efetivamente e deve ser abordado como alta prioridade.Problema: Interface/AtendimentoSentimento: PositivoPrioridade: BaixaO cliente está geralmente satisfeito com o produto, elogiando especificamente a interface intuitiva e o excelente suporte ao cliente. Este é um feedback positivo que não requer ação imediata. |
 
-# 4. Deixe o LLM pensar
+# 3. Deixe o LLM pensar
 
 O conceito de "chain of thought" (CoT) frequentemente melhora o desempenho dos modelos LLM em tarefas complexas como pesquisa, análise ou resolução de problemas. Isso ocorre quando você dá "espaço para ele pensar", encorajando-o a quebrar o problema em partes menores e considerar as nuances dos resultados.
 
@@ -105,7 +105,7 @@ O lucro líquido da loja é de R$17.000.
 </resposta>
 ```
 
-# 5. Utilize tags XML
+# 4. Utilize tags XML
 
 Quando o prompt tiver muitos componentes como contexto, instruções e exemplos, utilizar tags XML pode ser o "pulo do gato". Elas ajudam o LLM a separar as partes do seu prompt de maneira mais acurada, fornecendo respostas melhores.
 
@@ -157,7 +157,7 @@ Por favor, estruture sua resposta usando as seguintes tags:
 </instrucoes_adicionais>
 ```
 
-# 6. Dê uma "persona" ao LLM
+# 5. Dê uma "persona" ao LLM
 
 Ao utilizar um LLM, é possível aumentar sua performance de forma significativa utilizando o parâmetro "system". Essa técnica é conhecida como "Role prompting".
 
@@ -208,7 +208,7 @@ Com base nesses dados, por favor:
 
 Formate sua resposta em tópicos claros e concisos, utilizando termos técnicos de marketing digital quando apropriado.
 
-# 7. "Prefilling", ou Pré-preenchimento
+# 6. "Prefilling", ou Pré-preenchimento
 
 Ao utilizar um modelo LLM, é possível guiar suas respostas dando uma "previsão" de sua resposta. Isso direciona a resposta do modelo para que ela:
 
@@ -246,7 +246,7 @@ Resposta do Assistente:
 
 Esse tipo de otimização se torna especialmente importante em cenários produtivos, onde a economia de tokens é crucial.
 
-# 8. "Chaining" ou Encadeamento
+# 7. "Chaining" ou Encadeamento
 
 Ao lidar com problemas complexos, modelos LLM podem se perder se receberem um prompt muito grande com muitas tarefas. O processo de encadeamento tem o poder de quebrar uma tarefa complexa em tarefas menores, mais fáceis de resolver.
 
@@ -321,7 +321,7 @@ Vamos ver um exemplo de encadeamento aplicado a um contexto empresarial brasilei
 
 Neste exemplo, o pensamento encadeado foi utilizado para que o modelo primeiro identificasse os riscos no contrato, em seguida redigisse um e-mail propondo as mudanças a serem feitas nesse contrato, e por último, revisasse o tom e a formalidade deste e-mail. Em testes onde as tarefas são pedidas todas juntas, o modelo frequentemente esquece algumas delas e acaba não propondo mudanças de contrato.
     
-# 9. Dicas para Prompts Extensos
+# 8. Dicas para Prompts Extensos
 Ao trabalhar com prompts que contêm muitas informações, considere estas estratégias para melhorar os resultados:
 
 - 1. Priorize os Dados
@@ -354,7 +354,7 @@ Exemplo:
 Analise o relatório anual e a análise de concorrentes. Identifique vantagens estratégicas e recomende áreas de foco para o 3º trimestre.
 
 
-# 10. Dica “Bônus”
+# 9. Dica “Bônus”
 
 Nesse link, é possível encontrar uma grande diversidade de exemplos de prompts bem estruturados, seguindo muitas das práticas aqui descritas, eles podem ser utilizados de inspiração para seus prompts:
 
