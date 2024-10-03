@@ -34,7 +34,6 @@ Seus exemplos devem ser:
 - Diversos: Evitam que modelos peguem padrões não desejados, e mostram casos extremos para que o modelo não simplifique demais a lógica
 - Claros: Deixe os exemplos envolvidos por tags de exemplo:
 
-  <exemplo>Exemplo de resposta do modelo</exemplo>
 
 | **Papel** | **Sem Exemplos** | **Com Exemplos** |
 | --- | --- | --- |
