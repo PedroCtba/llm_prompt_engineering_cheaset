@@ -17,18 +17,12 @@ Trate todo modelo de LLM como um funcionário brilhante, mas que foi recém-cont
 - Forneça a sequência (Dê a ordem dos passos)
 
 Exemplo:
+Nesse exemplo, o prompt detalhado direciona o modelo a fornecer uma resposta direta e formatada para facilitar a análise. Isso economiza tempo e reduz a chance de incluir informações irrelevantes.
 
-| **Papel** | **Prompt Vago** | **Prompt Claro** |
-| --- | --- | --- |
-| Usuário | Por favor, resuma estes comentários de clientes sobre nossa nova linha de produtos naturais: {{DADOS_COMENTARIOS}} | Sua tarefa é analisar os comentários dos clientes sobre nossa nova linha de produtos naturais para uma apresentação à diretoria. Instruções:<br>1. Identifique os 3 produtos mais mencionados.<br>2. Liste os principais pontos positivos e negativos de cada produto.<br>3. Sugira 2 melhorias para cada produto com base nos comentários.<br>4. Resuma o sentimento geral em uma frase.<br>5. Mantenha o tom profissional e objetivo.<br>6. Limite a resposta a 300 palavras.<br>Dados para analisar: {{DADOS_COMENTARIOS}} |
-| Assistente (resposta do Claude) | Aqui está um resumo dos comentários dos clientes:<br>- Muitos elogios ao xampu de coco<br>- Alguns acharam o hidratante facial caro<br>- O sabonete de lavanda teve opiniões mistas<br>- No geral, os clientes gostaram da iniciativa de produtos naturais | 1. Produtos mais mencionados:<br>   a) Xampu de coco<br>   b) Hidratante facial<br>   c) Sabonete de lavanda<br>2. Principais pontos:<br>   Xampu de coco:<br>     Positivos: Cheiro agradável, deixa o cabelo macio<br>     Negativos: Embalagem pouco prática<br>   Hidratante facial:<br>     Positivos: Textura leve, boa absorção<br>     Negativos: Preço elevado, pouca duração<br>   Sabonete de lavanda:<br>     Positivos: Aroma relaxante, não resseca a pele<br>     Negativos: Espuma insuficiente<br>3. Sugestões de melhoria:<br>   Xampu de coco: Redesenhar embalagem, aumentar poder de limpeza<br>   Hidratante facial: Oferecer versão econômica, aumentar tamanho<br>   Sabonete de lavanda: Melhorar fórmula para mais espuma, intensificar aroma<br>4. Sentimento geral: Clientes estão entusiasmados com a linha natural, mas esperam ajustes em alguns produtos para justificar o investimento.<br>(Total: 298 palavras) |
-
-É possível notar que o prompt 2 foi muito melhor. Pois ele:
-
-- Disse para que os resultados seriam utilizados
-- Para qual audiência iria (diretoria)
-- Forneceu os passos sequencialmente
-- Fechou o escopo da resposta dizendo que queria uma análise limitada a 300 palavras
+| Função     | Prompt Vago | Prompt Detalhado |
+|------------|-------------|------------------|
+| Usuário    | <span style="color:red">Analise este relatório de performance de campanha e resuma os principais pontos.</span><br>`{{RELATÓRIO}}` | <span style="color:green">Analise este relatório de performance da campanha de marketing. Pule qualquer introdução. Seja breve e forneça apenas as informações essenciais. Liste apenas:<br>1) Objetivo da campanha<br>2) Métricas de desempenho (ex.: CTR, conversões, CPA)<br>3) Público-alvo atingido<br>4) Valor gasto<br>5) Retorno sobre investimento (ROI) estimado<br><br>Aqui está o relatório:<br>`{{RELATÓRIO}}`</span> |
+| Assistente | <span style="color:red">Segue um resumo dos pontos principais do relatório de performance da campanha:<br><br>A campanha teve como objetivo aumentar a visibilidade da marca e gerar leads. O relatório mostra que o CTR foi de 2.5%, enquanto as conversões totais foram de 350. O custo por aquisição (CPA) médio foi de R$ 15,00, e a campanha atingiu um público de aproximadamente 150.000 pessoas, com um investimento total de R$ 5.000. O ROI estimado foi de 300%, com um aumento significativo na percepção de marca.</span> | <span style="color:green">1) Objetivo: Aumentar visibilidade e gerar leads<br>2) Métricas: CTR 2.5%, 350 conversões, CPA R$ 15,00<br>3) Público-alvo atingido: 150.000 pessoas<br>4) Valor gasto: R$ 5.000<br>5) ROI estimado: 300%</span> |
 
 # 2. Use exemplos (Multishot prompting)
 
