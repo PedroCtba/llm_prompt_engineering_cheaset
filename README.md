@@ -104,240 +104,258 @@ Lucro líquido = R$20.000 - R$3.000 = R$17.000
 O lucro líquido da loja é de R$17.000.
 </resposta>
 ```
-Estes exemplos demonstram como o CoT pode ser aplicado em diferentes níveis de complexidade, permitindo que o LLM "pense" de forma mais estruturada e transparente.
 
-**Exemplo:**
-- 5. Utilize tags XML
+# 5. Utilize tags XML
+
+Quando o prompt tiver muitos componentes como contexto, instruções e exemplos, utilizar tags XML pode ser o "pulo do gato". Elas ajudam o LLM a separar as partes do seu prompt de maneira mais acurada, fornecendo respostas melhores.
+
+Motivos para utilização:
+
+- Clareza: separar bem as partes do seu prompt, deixando-o mais bem estruturado
+- Acurácia: faz com que o modelo não entenda parte do seu prompt como coisas que não são (exemplo: confundir o texto com instrução de resposta)
+- Flexibilidade: seu prompt fica mais fácil de modificar, tirando a tag, trocando-as de ordem, etc.
+- Processamento: quando você utiliza tags XML, a resposta provavelmente também virá em tags, o que deixa o resultado mais fácil de processar via código
+
+Melhores práticas:
+
+- Consistência: utilize sempre os mesmos nomes de tag em todos os seus prompts, e quando quiser referenciar algo que está em uma tag, fale sobre aquele algo usando o mesmo nome que o nome da tag
+- Hierarquia: use tags aninhadas se o seu conteúdo for hierárquico
+
+Exemplo de um prompt estruturado com tags XML:
+
+```xml
+<contexto>
+Você é um assistente virtual especializado em análise de dados de vendas para uma rede de livrarias no Brasil.
+</contexto>
+
+<dados>
+Vendas do último trimestre:
+- Loja A: R$ 150.000
+- Loja B: R$ 200.000
+- Loja C: R$ 180.000
+</dados>
+
+<tarefa>
+Analise os dados de vendas e forneça um relatório sucinto com as seguintes informações:
+1. Total de vendas da rede
+2. Loja com melhor desempenho
+3. Sugestão de meta para o próximo trimestre (aumento de 10% sobre o total)
+</tarefa>
+
+<formato_resposta>
+Por favor, estruture sua resposta usando as seguintes tags:
+<total_vendas>
+<melhor_loja>
+<meta_proxima>
+<analise>
+</formato_resposta>
+
+<instrucoes_adicionais>
+- Use valores em reais (R$)
+- Arredonde os valores para o inteiro mais próximo
+- Forneça uma breve análise de no máximo 3 frases
+</instrucoes_adicionais>
+```
+
+# 6. Dê uma "persona" ao LLM
+
+Ao utilizar um LLM, é possível aumentar sua performance de forma significativa utilizando o parâmetro "system". Essa técnica é conhecida como "Role prompting".
+
+Vantagens:
+
+- Melhora da acurácia: Em cenários complexos, dar uma persona pode melhorar muito a performance do modelo, pois a persona adequada gera uma aproximação semântica e contextual imediata com o problema sendo resolvido
+- Adequação da linguagem: A persona correta irá produzir outputs na linguagem adequada
+- Melhora do escopo: A persona correta tende a manter a resposta dentro dos limites esperados de resposta
+
+Esse tipo de estratégia pode ser utilizada diretamente no parâmetro de "system" da API:
+
+```python
+import anthropic
+
+client = anthropic.Anthropic()
+
+response = client.messages.create(
+    model="claude-3-5-sonnet-20240620",
+    max_tokens=2048,
+    system="Você é um cientista de dados experiente em uma empresa do Fortune 500.", # <-- role prompt
+    messages=[
+        {"role": "user", "content": "Analise este conjunto de dados em busca de anomalias: <dataset>{{DATASET}}</dataset>"}
+    ]
+)
+
+print(response.content)
+```
     
-    Quando o prompt tiver muitos componentes como contexto instruções e exemplos, utilizar testes ele pode ser ”pulo do gato”. Elas ajudam o LLM a separar as partes do seu prompt de maneira mais acurada fornecendo respostas melhores.
+Mas também pode ser utilizado de maneira mais casual, diretamente no texto do prompt. Aqui está um exemplo:
+
+Persona: Você é um especialista em marketing digital com 15 anos de experiência em campanhas para e-commerce no Brasil.
+
+Tarefa: Analise os seguintes dados de uma campanha recente de marketing para uma loja online de eletrônicos:
+
+<dados_campanha>
+- Duração: 2 semanas
+- Orçamento total: R$ 50.000
+- Plataformas utilizadas: Facebook Ads, Google Ads, Instagram
+- CTR médio: 2,5%
+- Taxa de conversão: 3%
+- ROI: 150%
+</dados_campanha>
+
+Com base nesses dados, por favor:
+1. Avalie o desempenho geral da campanha
+2. Identifique pontos fortes e fracos
+3. Sugira 3 melhorias específicas para futuras campanhas
+
+Formate sua resposta em tópicos claros e concisos, utilizando termos técnicos de marketing digital quando apropriado.
+
+# 7. "Prefilling", ou Pré-preenchimento
+
+Ao utilizar um modelo LLM, é possível guiar suas respostas dando uma "previsão" de sua resposta. Isso direciona a resposta do modelo para que ela:
+
+1. Fique dentro dos formatos desejados
+2. Pule descrições desnecessárias
+3. Mantenha a "persona" enquanto o chat continua
+
+Essa técnica pode ser utilizada diretamente na API:
+
+```python
+import anthropic
+
+client = anthropic.Anthropic()
+response = client.messages.create(
+    model="claude-3-5-sonnet-20240620",
+    max_tokens=1024,
+    messages=[
+        {"role": "user", "content": "Qual é a sua cor favorita?"},
+        {"role": "assistant", "content": "Como um assistente de IA, eu não tenho uma cor favorita, mas se eu tivesse que escolher, seria verde porque"}  # Pré-preenchimento aqui
+    ]
+)
+```
+
+A técnica também pode ser utilizada diretamente no chat. Aqui está um exemplo em português:
+
+Usuário: Extraia o nome, tamanho, preço e cor desta descrição de produto como um objeto JSON:
+
+<descricao>
+O CasaInteligente Mini é um assistente doméstico compacto disponível nas cores preto ou branco por apenas R$ 299,90. Com apenas 13 cm de largura, ele permite que você controle luzes, termostatos e outros dispositivos conectados por voz ou aplicativo — não importa onde você o coloque em sua casa. Este pequeno hub acessível traz controle conveniente e sem as mãos para seus dispositivos inteligentes.
+</descricao>
+
+Assistente (pré-preenchimento): {
+Resposta do Assistente:
+{ "nome": "CasaInteligente Mini", "tamanho": "13 cm de largura", "preco": "R$ 299,90", "cor": ["preto", "branco"] }
+
+Esse tipo de otimização se torna especialmente importante em cenários produtivos, onde a economia de tokens é crucial.
+
+# 8. "Chaining" ou Encadeamento
+
+Ao lidar com problemas complexos, modelos LLM podem se perder se receberem um prompt muito grande com muitas tarefas. O processo de encadeamento tem o poder de quebrar uma tarefa complexa em tarefas menores, mais fáceis de resolver.
+
+Vantagens:
+
+1. Acurácia: cada tarefa recebe atenção total do modelo, reduzindo os erros
+2. Clareza: tarefas menores geram instruções mais claras e outputs mais precisos
+3. Rastreabilidade: é mais fácil perceber erros isolados e corrigi-los
+
+Quando utilizar?
+
+- **Análise multi-etapas**: Veja os exemplos jurídicos e de negócios abaixo.
+- **Pipelines de criação de conteúdo**: Pesquisa → Esquema → Rascunho → Edição → Formatação.
+- **Processamento de dados**: Extração → Transformação → Análise → Visualização.
+- **Tomada de decisão**: Coletar informações → Listar opções → Analisar cada uma → Recomendar.
+- **Loops de verificação**: Gerar conteúdo → Revisar → Refinar → Re-revisar.
+
+Como fazer?
+
+1. Identificar subtarefas: quebre sua tarefa em tarefas distintas e menores
+2. Utilize tags XML para passar outputs de um prompt para outro
+3. Faça com que cada tarefa tenha um único retorno, com um objetivo claro
+4. Itere: Refine as subtarefas baseado na qualidade das respostas do modelo
+
+---
+
+## Avançado: "Encadeamento auto-corretivo"
+
+É possível encadear um prompt ao outro para fazer com que o modelo revise a própria resposta. Aqui está um exemplo adaptado ao contexto brasileiro:
+
+### Prompt 1
+
+**Usuário**: Resuma este artigo sobre uma nova política pública de saúde. <artigo>{{ARTIGO_POLITICA_SAUDE}}</artigo> Foque na metodologia, resultados e implicações para o SUS.
+
+**Assistente**: [O assistente fornece um resumo do artigo]
+
+### Prompt 2
+
+**Usuário**: Sua tarefa é fornecer feedback sobre um resumo de artigo de política pública de saúde. Aqui está o resumo: <resumo>{{RESUMO}}</resumo> Aqui está o artigo original: <artigo>{{ARTIGO_POLITICA_SAUDE}}</artigo> Revise este resumo quanto à precisão, clareza e completude em uma escala de A a F.
+
+**Assistente**: [O assistente fornece feedback detalhado sobre o resumo]
+
+### Prompt 3
+
+**Usuário**: Sua tarefa é melhorar um resumo de artigo com base no feedback recebido. Aqui está o primeiro rascunho do resumo: <resumo>{{RESUMO}}</resumo> Aqui está o artigo original: <artigo>{{ARTIGO_POLITICA_SAUDE}}</artigo> Aqui está o feedback: <feedback>{{FEEDBACK}}</feedback> Atualize o resumo com base no feedback.
+
+**Assistente**: [O assistente fornece uma versão atualizada e melhorada do resumo]
+
+---
+
+## Exemplo de Encadeamento (CoT)
+
+Vamos ver um exemplo de encadeamento aplicado a um contexto empresarial brasileiro:
+
+### Prompt 1
+
+**Usuário**: Você é nosso Diretor Jurídico. Revise este contrato de fornecimento de software como serviço (SaaS) para riscos, focando em privacidade de dados, SLAs e limites de responsabilidade. <contrato>{{CONTRATO}}</contrato> Apresente suas conclusões em tags <riscos>.
+
+**Assistente**: [O assistente fornece uma análise detalhada dos riscos do contrato]
+
+### Prompt 2
+
+**Usuário**: Redija um e-mail para o fornecedor de SaaS destacando as seguintes preocupações e propondo mudanças. Aqui estão as preocupações: <preocupacoes>{{PREOCUPACOES}}</preocupacoes>
+
+**Assistente**: [O assistente redige um e-mail detalhando as preocupações e propondo mudanças]
+
+### Prompt 3
+
+**Usuário**: Sua tarefa é revisar um e-mail e fornecer feedback. Aqui está o e-mail: <email>{{EMAIL}}</email> Dê feedback sobre o tom, clareza e profissionalismo.
+
+**Assistente**: [O assistente fornece feedback detalhado sobre o e-mail]
+
+Neste exemplo, o pensamento encadeado foi utilizado para que o modelo primeiro identificasse os riscos no contrato, em seguida redigisse um e-mail propondo as mudanças a serem feitas nesse contrato, e por último, revisasse o tom e a formalidade deste e-mail. Em testes onde as tarefas são pedidas todas juntas, o modelo frequentemente esquece algumas delas e acaba não propondo mudanças de contrato.
     
-    Motivos para utlização:
-    
-    - Clareza: separar bem as partes do seu prompt deixando ele mais bem estruturado
-    - Acurácia: faz com que o modelo não entenda parte do seu prompt como coisas que não são (exemplo: confundir com o texto com instrução de resposta)
-    - Flexibilidade: seu prompt fica mais fácil de modificar tirando a tag trocando elas de ordem, etc.
-    - Processamento: quando você utiliza tegs xml, a resposta provavelmente também virá em tags, que deixa o resultado mais fácil de processar via código.
-    
-    Melhores práticas:
-    
-    - Consistência: utilize sempre os mesmos nomes de tag em todos os seus prompts, e quando quiser referenciar algo que está em uma tag fale sobre aquele algo usando o mesmo nome que o nome da tag.
-    - Hierarquia: use tags aninhadas se o seu conteúdo for hierárquico
-    
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/ea3d8b7a-af83-45a7-ae17-6fe5ca8df043/7d886b2b-8339-423a-a09b-3860e8c08674/image.png)
-    
-- 6. De uma “persona” ao LLM
-    
-    Ao utilizar um LLM, é possível aumentar sua performance de forma aguda utilizando o parâmetro “system”, essa técninca é conhecida como “Role prompting”
-    
-    Vantagens:
-    
-    - Melhora da acurácia: Em cenário complexos, dar uma persona pode melhorar muito a performance do modelo, pois a persona adequada gera uma aproximação semântica e contextual imediata com o problema sendo resolvido
-    - Adequação do linguagar:  A persona correta irá produir otputs no lingugar adequado.
-    - Melhora do scopo: A persona correta tende a manter a resposta dentro dos limites esperados de resposta.
-    
-    Esse tipo de estratégia pode ser utilizada diretamente no parâmetro de “system” da API
-    
-    ```python
-    import anthropic
-    
-    client = anthropic.Anthropic()
-    
-    response = client.messages.create(
-        model="claude-3-5-sonnet-20240620",
-        max_tokens=2048,
-        system="You are a seasoned data scientist at a Fortune 500 company.", # <-- role prompt
-        messages=[
-            {"role": "user", "content": "Analyze this dataset for anomalies: <dataset>{{DATASET}}</dataset>"}
-        ]
-    )
-    
-    print(response.content)
-    ```
-    
-    Mas também pode ser utilizado de maneira mais casual, diretamente no texto do prompt
-    
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/ea3d8b7a-af83-45a7-ae17-6fe5ca8df043/47b27dd1-a4e7-43de-907d-855357ca6305/image.png)
-    
-- 7. “Prefilling”, ou Pré-preenchimento
-    
-    Ao utilizar um modelo LLM, é possível guiar suas respostas dando uma “Previsão” de sua resposta, isso enviesa a resposta do modelo para que ela:
-    
-    1. Fique dentro dos formatos desejados
-    2. Pule descrições desnecessárias
-    3. Mantenha a “persona” enquanto o chat continua
-    
-    Essa técnica pode ser utilizada diretamente na API
-    
-    ```python
-    import anthropic
-    
-    client = anthropic.Anthropic()
-    response = client.messages.create(
-        model="claude-3-5-sonnet-20240620",
-        max_tokens=1024,
-        messages=[
-            {"role": "user", "content": "What is your favorite color?"},
-            {"role": "assistant", "content": "As an AI assistant, I don't have a favorite color, But if I had to pick, it would be green because"}  # Prefill here
-        ]
-    )
-    ```
-    
-    A técnica também pode ser utilizada diretamente no chat:
-    
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/ea3d8b7a-af83-45a7-ae17-6fe5ca8df043/caf7ac55-bf29-495e-b27c-a292c479f33b/image.png)
-    
-    Esse tipo de otimização se torna especialmente importante em cenários produtivos, onde a economia de tokens é crucial.
-    
-- 8. “Chaining” ou, encadeamento
-    
-    Ao lidar com problemas complexos, modelos LLM’s podem acabar se perdendo se receberem um prompt muito grande com muitas tarefas. O processo de encadeamento, tem o poder de quebrar uma tarefa complexa em tarefas menores, mais fáceis de resolver.
-    
-    Vantagens:
-    
-    1. Acurácia: cada tarefa atenção total do modelo, reduzindo os erros
-    2. Clareza: tarefas menores geram instruções mais claras e outputs mais claros
-    3. Traceability: é mais fácil perceber erros isolados e consertá-los
-    
-    Quando utilizar?
-    
-    - **Multi-step analysis**: See the legal and business examples below.
-    - **Content creation pipelines**: Research → Outline → Draft → Edit → Format.
-    - **Data processing**: Extract → Transform → Analyze → Visualize.
-    - **Decision-making**: Gather info → List options → Analyze each → Recommend.
-    - **Verification loops**: Generate content → Review → Refine → Re-review.
-    
-    Como fazer?
-    
-    1. Identificar sub tarefas: quebre sua tarefa, em tarefas distintas e menores
-    2. Utilize tags XML para passar outputs de um prompt para outro
-    3. De cada tarefa tenha um único retorno, com um objetivo claro
-    4. Itere: Refine sub tarefas baseado na qualidade das respostas do modelo
-    
-    ---
-    
-    - Avançado: “Encadeamento auto-corretivo”
-        
-        É possível encadear um prompt ao outro para fazer com que o modelo revise a própria resposta, por exemplo:
-        
-        ### **Prompt 1**
-        
-        | **Role** | **Content** |
-        | --- | --- |
-        | User | Summarize this medical research paper.<paper>{{RESEARCH_PAPER}}</paper>Focus on methodology, findings, and clinical implications. |
-        | Assistant{{SUMMARY}} | Methodology: Double-blind RCT with 500 Type 2 diabetes patients. Group A (n=250) received novel GLP-1/GIP dual agonist; Group B (n=250) received standard GLP-1 agonist. 24-week trial, primary endpoint: HbA1c reduction.Findings:- Group A: 1.8% mean HbA1c reduction- Group B: 1.1% mean HbA1c reduction- 68% of Group A vs. 52% of Group B achieved HbA1c <7%- Group A: 5.2kg mean weight loss- Group B: 3.1kg mean weight lossSafety: Similar adverse event profiles, no serious events attributed to treatment.Clinical Implications: Dual agonist shows superior glycemic control and weight loss compared to standard therapy. Could be a game-changer, especially for obese diabetics. |
-        
-        ### **Prompt 2**
-        
-        | **Role** | **Content** |
-        | --- | --- |
-        | User | Your task is to provide feedback on a research paper summary. Here is a summary of a medical research paper:<summary>{{SUMMARY}}</summary>Here is the research paper:<paper>{{RESEARCH_PAPER}}</paper>Review this summary for accuracy, clarity, and completeness on a graded A-F scale. |
-        | Assistant{{FEEDBACK}} | 1. Accuracy: A- Correctly reported key stats: HbA1c reductions, weight loss.- Accurately noted safety profile and lack of serious adverse events.- Assertion of “game-changer” is justified by significantly better outcomes.2. Clarity: A-- Concise and well-structured with clear sections.- Good use of comparative language (e.g., “up 3% from Q1”) for context.- Minor issue: Acronyms like “RCT,” “GLP-1,” and “GIP” not defined. Consider spelling out first use.3. Completeness: B+- Covers all requested areas: methodology, findings, clinical implications.- Missing: Baseline characteristics of groups (were they well-matched?).- Missing: Any secondary endpoints (e.g., blood pressure, lipids).- Consider: Long-term implications or need for further research.Overall, the summary is accurate and clear, providing key insights for a quick grasp of the study. To elevate to A+, define acronyms, mention group baseline stats, note any secondary outcomes, and briefly touch on the need for long-term studies. |
-        
-        ### **Prompt 3**
-        
-        | **Role** | **Content** |
-        | --- | --- |
-        | User | Your task is to improve a paper summary given feedback. Here is the first draft of a medical research paper:<summary>{{SUMMARY}}</summary>Here is the research paper:<paper>{{RESEARCH_PAPER}}</paper>Here is the feedback:<feedback>{{FEEDBACK}}</feedback>Update the summary based on the feedback. |
-        | Assistant | Methodology: Double-blind randomized controlled trial (RCT) with 500 Type 2 diabetes patients. Group A (n=250) received a novel glucagon-like peptide-1/glucose-dependent insulinotropic polypeptide (GLP-1/GIP) dual agonist; Group B (n=250) received a standard GLP-1 agonist. The 24-week trial’s primary endpoint was HbA1c reduction. Groups were well-matched for age, BMI, and baseline HbA1c.Findings:- Group A: 1.8% mean HbA1c reduction- Group B: 1.1% mean HbA1c reduction- 68% of Group A vs. 52% of Group B achieved HbA1c <7%- Group A: 5.2kg mean weight loss- Group B: 3.1kg mean weight lossSecondary endpoints showed improvements in blood pressure and lipid profiles for both groups, with Group A showing slightly better results.Safety: Similar adverse event profiles, with no serious events attributed to either treatment.Clinical Implications: The dual GLP-1/GIP agonist demonstrates superior glycemic control and weight loss compared to standard GLP-1 therapy. These results suggest it could be a significant advancement, particularly for obese diabetics. However, longer-term studies are needed to confirm sustained efficacy and safety, as well as to investigate potential benefits on cardiovascular outcomes. |
-    
-    ---
-    
-    Exemplo de Encadeamento (CoT)
-    
-    Note that Claude misses the instruction to provide proposed changes in its email draft.
-    
-    ### **Prompt 1**
-    
-    | **Role** | **Content** |
-    | --- | --- |
-    | User | You’re our Chief Legal Officer. Review this SaaS contract for risks, focusing on data privacy, SLAs, and liability caps.<contract>{{CONTRACT}}</contract>Output your findings in <risks> tags. |
-    | Assistant{{CONCERNS}} | 1. Data Privacy (Section 7):- Issue: Vendor has broad rights to use client data for “service improvement.”- Risk: Could lead to unauthorized data sharing or monetization of client data.- Impact: Potential breach of client trust, regulatory fines (GDPR, CCPA).2. SLAs (Section 5):- Issue: 99.5% uptime guarantee is below industry standard (typically 99.99%).- Risk: Up to 43.8 hours of downtime per year vs. 52.6 minutes at 99.99%.- Impact: Operational disruptions, revenue loss, client dissatisfaction.3. Liability (Section 9):- Issue: Liability cap set at 3 months of fees.- Risk: Inadequate for potential data breaches, IP theft, or prolonged service failures.- Impact: Insufficient compensation for damages that could far exceed the cap, like class-action lawsuits or regulatory fines. |
-    
-    ### **Prompt 2**
-    
-    | **Role** | **Content** |
-    | --- | --- |
-    | User | Draft an email to a SaaS product vendor outlining the following concerns and proposing changes. Here are the concerns:<concerns>{{CONCERNS}}</concerns> |
-    | Assistant{{EMAIL}} | Dear {{VENDOR}},After a thorough review of the proposed SaaS agreement, our legal team has identified several high-priority concerns that must be addressed before we can proceed:1. Data Privacy (Section 7):- Current: Broad rights to use client data for “service improvement.”- Concern: Potential unauthorized data sharing or monetization.- Proposed Change: Limit data use to direct service provision. Any use for improvement, analytics, or marketing must be opt-in, revocable, and anonymized.2. SLAs (Section 5):- Current: 99.5% uptime guarantee.- Concern: Up to 43.8 hours of downtime per year, risking operational disruptions.- Proposed Change: 99.99% uptime with tiered service credits. E.g., 10% credit for <99.99%, 25% for <99.9%, 50% for <99.5%.3. Liability (Section 9):- Current: Cap at 3 months of fees.- Concern: Grossly inadequate for data breaches, IP theft, or prolonged outages.- Proposed Change: 12 months’ fees for general liability. Uncapped for data breaches, willful misconduct, IP infringement.These changes are non-negotiable for us. They align with industry standards and our commitment to data security, operational excellence, and fiduciary responsibility. We value the potential of our partnership, and addressing these will set a strong foundation.Please have your legal team review and incorporate these changes. We’re happy to discuss further to ensure mutual understanding and agreement.Best regards,{{CLO_NAME}} |
-    
-    ### **Prompt 3**
-    
-    | **Role** | **Content** |
-    | --- | --- |
-    | User | Your task is to review an email and provide feedback. Here is the email:<email>{{EMAIL}}</email>Give feedback on tone, clarity, and professionalism. |
-    | Assistant | 1. Tone:- Professional and assertive without being confrontational.- Use of “non-negotiable” is strong but justified given the criticality of the issues.- Collaborative language (“we value,” “happy to discuss”) balances the firmness, maintaining a constructive tone.2. Clarity:- Excellent structuring: Current state, concern, and proposed change for each issue.- Technical terms (e.g., “EBITDA,” “tiered service credits”) are appropriate for a B2B SaaS context.- Action items are clear: vendor’s legal team to review and incorporate changes.3. Professionalism:- Focuses on mutual benefit and industry standards, not just our demands.- Mentions broader responsibilities (data security, operational excellence, fiduciary duty), elevating the discussion.- Offers further discussion, showing commitment to understanding and resolving issues.Overall, the email strikes the right balance of assertiveness and collaboration. It clearly articulates our concerns, proposes specific solutions, and maintains a professional, partnership-oriented tone. No revisions needed; proceed with sending. |
-    
-    Nesse exemplo, o pensamento encadeado foi utilizado para que o modelo primeiro encontra-se os riscos no contrato em sequência a escrevesse um e-mail propondo as mudanças a serem feitas nesse contrato, e em sequência a última tarefa, foi uma revisão do tom de formalidade deste e-mail. Em testes onde as tarefas são pedidas todas juntas o modelo esquece algumas delas e acaba não propondo mudanças de contrato.
-    
-- 9. Dicas para grandes prompts
-    
-    Existem algumas dicas que são específicas a prompt que são muito grandes:
-    
-    1. Comesse com os dados:
-        
-        Quando o seu prompt possuir dados extensos, coloque os dados no topo do prompt e em sequência forneço o resto do prompt. Na data atual (02/10/2024) modelos em arquitetura LLM tendem a acertar mais nesse tipo de tarefa quando estes documentos estão no começo do prompt (30% a mais)
-        
-    2. Estruture com XML
-        
-        Ao utilizar múltiplos documentos, coloque eles em volta de tags de documento
-        
-        ```json
-        <documents>
-          <document index="1">
-            <source>annual_report_2023.pdf</source>
-            <document_content>
-              {{ANNUAL_REPORT}}
-            </document_content>
-          </document>
-          <document index="2">
-            <source>competitor_analysis_q2.xlsx</source>
-            <document_content>
-              {{COMPETITOR_ANALYSIS}}
-            </document_content>
-          </document>
-        </documents>
-        
-        Analyze the annual report and competitor analysis. Identify strategic advantages and recommend Q3 focus areas.
-        ```
-        
-        Perceba que aqui a dica da stags xml hierárquica e é seguida, todos os documentos estão em volta de uma tag genérica de documentos, o conteúdo e os títulos também estão separados em tags próprias. 
-        
-    3. Retire “Partes importantes”
-        
-        Quando os documentos forem demasiadamente longos, peça que o LLM extrai as partes importantes, e depois, analise essas partes, isso é parecido com o que utilizamos no conceito de encadeamento, quando uma tarefa muito grande é quebrada em passos menores, mas aqui, isso ocorre mais na linha de tirar informação não útil da análise.
-        
-        ```json
-        You are an AI physician's assistant. 
-        Your task is to help doctors diagnose possible patient illnesses.
-        
-        <documents>
-          <document index="1">
-            <source>patient_symptoms.txt</source>
-            <document_content>
-              {{PATIENT_SYMPTOMS}}
-            </document_content>
-          </document>
-          <document index="2">
-            <source>patient_records.txt</source>
-            <document_content>
-              {{PATIENT_RECORDS}}
-            </document_content>
-          </document>
-          <document index="3">
-            <source>patient01_appt_history.txt</source>
-            <document_content>
-              {{PATIENT01_APPOINTMENT_HISTORY}}
-            </document_content>
-          </document>
-        </documents>
-        
-        Find quotes from the patient records and appointment history that are relevant to diagnosing the patient's reported symptoms. 
-        Place these in <quotes> tags. Then, based on these quotes, list all information that would help the doctor diagnose the patient's symptoms. 
-        Place your diagnostic information in <info> tags.
-        ```
-        
-- 10. Dica “Bônus”
-    
-    Nesse link você pode encontrar vários prompt’s bem estruturados feitos em muitos contextos diversos, eles podem ser usados de inspiração para os seus prompts:
-    
-    [Library - Anthropic](https://docs.anthropic.com/en/prompt-library/library)
+# 9. Dicas para Prompts Extensos
+Ao trabalhar com prompts que contêm muitas informações, considere estas estratégias para melhorar os resultados:
+
+- 1. Priorize os Dados
+Por quê? As IAs de linguagem atuais tendem a processar melhor as informações colocadas no início do prompt.
+Como fazer: Coloque os dados mais importantes ou extensos no topo do seu prompt, seguidos pelas instruções ou perguntas.
+Benefício: Aumenta a precisão da resposta em até 30%.
+
+- 2. Estruture com XML
+Por quê? Organizar as informações em uma estrutura clara ajuda a IA a entender e processar melhor os dados.
+Como fazer: Use tags XML para separar e identificar diferentes partes do seu prompt, especialmente ao lidar com múltiplos documentos ou fontes de dados.
+Exemplo:
+
+```xml
+<documentos>
+  <documento indice="1">
+    <fonte>relatorio_anual_2023.pdf</fonte>
+    <conteudo>
+      {{CONTEÚDO_DO_RELATÓRIO_ANUAL}}
+    </conteudo>
+  </documento>
+  <documento indice="2">
+    <fonte>analise_concorrentes_2trim.xlsx</fonte>
+    <conteudo>
+      {{CONTEÚDO_DA_ANÁLISE_DE_CONCORRENTES}}
+    </conteudo>
+  </documento>
+</documentos>
+```
+
+Analise o relatório anual e a análise de concorrentes. Identifique vantagens estratégicas e recomende áreas de foco para o 3º trimestre.
+
+
+# 10. Dica “Bônus”
+
+Nesse link, é possível encontrar uma grande diversidade de exemplos de prompts bem estruturados, seguindo muitas das práticas aqui descritas, eles podem ser utilizados de inspiração para seus prompts:
+
+https://docs.anthropic.com/en/prompt-library/library
