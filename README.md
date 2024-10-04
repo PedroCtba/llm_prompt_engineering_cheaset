@@ -1,52 +1,195 @@
 # Guia Prático de Prompt Engineering: Otimizando suas Interações com LLM's
 
-Antes de mergulharmos no fascinante mundo do Prompt Engineering, quero que você entenda quando e como aplicá-lo. Nem todos os desafios com IAs podem ser resolvidos apenas ajustando prompts - alguns requerem mudanças mais profundas na arquitetura do sistema. No entanto, para a maioria dos casos, o Prompt Engineering oferece uma solução rápida, eficaz e de fácil manutenção, aproveitando a estrutura existente do modelo de IA.
+Antes de falar sobre Prompt Engineering, vale uma observação de quando aplicá-lo. Nem todos os desafios com LLM's podem ser resolvidos apenas com ajuste de prompts - alguns desafions como modelos com baixa aderência a uma língua incomun, latência na geração de reposta, e etc. Requerem mudanças mais "sistemáticas". No entanto, esse tipo de desafio é mais incomun, e na maioria dos casos, o Prompt Engineering oferece uma solução rápida, eficaz e de fácil manutenção, que aproveita a estrutura existente.
 
-Importante: O Prompt Engineering eficaz não é um processo de "tentativa e erro" aleatório. É fundamental que você possa medir e comprovar a melhoria do desempenho do modelo após cada ajuste.
+Importante: É fundamental que você possa medir e comprovar a melhoria do desempenho do modelo após cada ajuste feito com técnicas de Prompt Engineering. Tendo em vista a natureza heurística dos LLM's, onde não necessesariamente técnicas mais complexas geram resultados melhores.
+
 A seguir, irei apresentar uma lista de ações para aprimorar a eficácia dos seus prompts, organizadas por ordem de importância. Para tarefas de menor prioridade ou não destinadas à produção, os primeiros passos geralmente são suficientes:
     
 # 1. Seja claro, direto e detalhado
 
-Trate todo modelo de LLM como um funcionário brilhante, mas que foi recém-contratado. Portanto, não conhece as normas, estilos, guias ou preferências da empresa.
+Trate todo modelo de LLM como um funcionário brilhante, mas que foi recém-contratado. Ele não conhece as normas, estilos, guias ou preferências da empresa.
 
-- Diga para que o resultado será utilizado
-- Para quem ele será fornecido
-- Em qual fluxo de trabalho essa tarefa está participando, e em qual etapa
-- O que caracteriza um resultado "bem-sucedido" dessa tarefa
-- Limite o escopo da resposta (Se você quer só código, diga isso)
-- Forneça a sequência (Dê a ordem dos passos)
+- Diga para que o resultado será utilizado.
+- Para quem ele será fornecido.
+- O que caracteriza um resultado "bem-sucedido" dessa tarefa.
+- Limite o escopo da resposta (Se você quer apenas código, diga)
+- Forneça a sequência (ordem dos passos)
 
-Exemplo:
-Nesse exemplo, o prompt detalhado direciona o modelo a fornecer uma resposta direta e formatada para facilitar a análise. Isso economiza tempo e reduz a chance de incluir informações irrelevantes.
+Exemplos:
+--
+**Prompt Vago**:
+```markdown
+Por favor, resuma estes comentários de clientes sobre nossa nova linha de produtos naturais: {{DADOS_COMENTARIOS}}
+```
 
-| Função     | Prompt Vago | Prompt Detalhado |
-|------------|-------------|------------------|
-| Usuário    | <span style="color:red">Analise este relatório de performance de campanha e resuma os principais pontos.</span><br>`{{RELATÓRIO}}` | <span style="color:green">Analise este relatório de performance da campanha de marketing. Pule qualquer introdução. Seja breve e forneça apenas as informações essenciais. Liste apenas:<br>1) Objetivo da campanha<br>2) Métricas de desempenho (ex.: CTR, conversões, CPA)<br>3) Público-alvo atingido<br>4) Valor gasto<br>5) Retorno sobre investimento (ROI) estimado<br><br>Aqui está o relatório:<br>`{{RELATÓRIO}}`</span> |
-| Assistente | <span style="color:red">Segue um resumo dos pontos principais do relatório de performance da campanha:<br><br>A campanha teve como objetivo aumentar a visibilidade da marca e gerar leads. O relatório mostra que o CTR foi de 2.5%, enquanto as conversões totais foram de 350. O custo por aquisição (CPA) médio foi de R$ 15,00, e a campanha atingiu um público de aproximadamente 150.000 pessoas, com um investimento total de R$ 5.000. O ROI estimado foi de 300%, com um aumento significativo na percepção de marca.</span> | <span style="color:green">1) Objetivo: Aumentar visibilidade e gerar leads<br>2) Métricas: CTR 2.5%, 350 conversões, CPA R$ 15,00<br>3) Público-alvo atingido: 150.000 pessoas<br>4) Valor gasto: R$ 5.000<br>5) ROI estimado: 300%</span> |
+**Resposta (Prompt Vago)**:
+```markdown
+Aqui está um resumo dos comentários dos clientes:
+- Muitos elogios ao xampu de coco
+- Alguns acharam o hidratante facial caro
+- O sabonete de lavanda teve opiniões mistas
+- No geral, os clientes gostaram da iniciativa de produtos naturais
+```
+
+
+**Prompt Claro**: 
+```markdown
+Sua tarefa é analisar os comentários dos clientes sobre nossa nova linha de produtos naturais para uma apresentação à diretoria. Instruções:
+
+1. Identifique os 3 produtos mais mencionados.
+2. Liste os principais pontos positivos e negativos de cada produto.
+3. Sugira 2 melhorias para cada produto com base nos comentários.
+4. Resuma o sentimento geral em uma frase.
+5. Mantenha o tom profissional e objetivo.
+6. Limite a resposta a 300 palavras.
+
+Dados para analisar: {{DADOS_COMENTARIOS}}
+```
+
+**Resposta (Prompt Clato)**:
+```markdown
+1. Produtos mais mencionados:
+a) Xampu de coco
+b) Hidratante facial
+c) Sabonete de lavanda
+
+2. Principais pontos:
+Xampu de coco:
+  Positivos: Cheiro agradável, deixa o cabelo macio<
+  Negativos: Embalagem pouco prática
+
+Hidratante facial:
+  Positivos: Textura leve, boa absorção
+  Negativos: Preço elevado, pouca duração
+
+Sabonete de lavanda:
+  Positivos: Aroma relaxante, não resseca a pele
+  Negativos: Espuma insuficiente
+
+3. Sugestões de melhoria:
+Xampu de coco: Redesenhar embalagem, aumentar poder de limpeza   Hidratante facial: Oferecer versão econômica, aumentar tamanho.  Sabonete de lavanda: Melhorar fórmula para mais espuma, intensificar aroma
+
+4. Sentimento geral: Clientes estão entusiasmados com a linha natural, mas esperam ajustes em alguns produtos para justificar o investimento
+```
+
+
+É possível notar que o prompt 2 foi melhor. Pois:
+
+- Gerou mais ajuste da resposta com o público alvo do resultado.
+- Forneceu os passos sequencialmente.
+- Fechou o escopo da resposta dizendo que queria uma análise limitada a 300 palavras.
 
 # 2. Use exemplos (Multishot prompting)
 
-Fornecendo exemplos bem montados de como você quer sua resposta, a necessidade de muito texto explicativo é dramaticamente reduzida, e a performance do modelo também melhora.
+Fornecendo exemplos bem montados de como você quer sua resposta, a necessidade de muito texto explicativo é dramaticamente reduzida, e a performance do modelo melhora.
 
 Seus exemplos devem ser:
 
 - Relevantes: Refletem a realidade dos casos de uso que você irá ver
-- Diversos: Evitam que modelos peguem padrões não desejados, e mostram casos extremos para que o modelo não simplifique demais a lógica
+- Diversos: Evitam que modelos peguem padrões não desejados, e "edge cases" para que o modelo não simplifique demais a lógica
 - Claros: Deixe os exemplos envolvidos por tags de exemplo:
 
+  ```markdown
+  <exemplo>Exemplo de resposta do modelo</exemplo>
+  ```
 
-| **Papel** | **Sem Exemplos** | **Com Exemplos** |
-| --- | --- | --- |
-| Usuário | Analise este feedback de cliente e categorize os problemas. Use estas categorias: Interface, Desempenho, Solicitação de Recurso, Integração, Preço e Outros. Também avalie o sentimento (Positivo/Neutro/Negativo) e a prioridade (Alta/Média/Baixa). Aqui está o feedback: {{FEEDBACK}} | Nossa equipe de atendimento está sobrecarregada com feedbacks não estruturados. Sua tarefa é analisar o feedback e categorizar problemas para nossas equipes de produto e engenharia. Use estas categorias: Interface, Desempenho, Solicitação de Recurso, Integração, Preço e Outros. Também avalie o sentimento (Positivo/Neutro/Negativo) e a prioridade (Alta/Média/Baixa). Aqui está um exemplo:<exemplo>Entrada: O novo aplicativo de entrega é horrível! Demora uma eternidade para carregar o cardápio e não consigo encontrar o botão de rastreamento do pedido. Resolvam isso urgentemente!Categoria: Interface, DesempenhoSentimento: NegativoPrioridade: Alta</exemplo>Agora, analise este feedback: {{FEEDBACK}} |
-| Assistente (resposta do Claude) | Aqui está a análise do feedback do cliente:Problema: InterfaceSentimento: NegativoPrioridade: AltaO cliente está frustrado com o novo design do aplicativo, que considera confuso e lento para carregar. Eles mencionam especificamente a falta do botão de "rastreamento", que provavelmente é um recurso crítico. Este problema precisa ser abordado com alta prioridade.Problema: IntegraçãoSentimento: PositivoPrioridade: MédiaO cliente está satisfeito com a integração existente com o iFood, mas gostaria de ver suporte para o Rappi também. Esta é uma solicitação de recurso que poderia ser considerada para uma atualização futura do produto.Problema: PreçoSentimento: NegativoPrioridade: AltaO cliente acha o preço das entregas irrazoável, especialmente para pedidos pequenos. Eles estão ameaçando mudar para um concorrente, então este é um problema de alta prioridade que precisa ser revisto.Problema: DesempenhoSentimento: NegativoPrioridade: AltaO cliente está enfrentando problemas críticos com o aplicativo móvel, onde pedidos grandes resultam consistentemente em travamentos. Este é um problema significativo que afeta a capacidade do cliente de usar o produto efetivamente e deve ser abordado como alta prioridade.Problema: Interface/AtendimentoSentimento: PositivoPrioridade: BaixaO cliente está geralmente satisfeito com o produto, elogiando especificamente a interface intuitiva e o excelente suporte ao cliente. Este é um feedback positivo que não requer ação imediata. |
 
-# 3. Deixe o LLM pensar
+Exemplos
+--
+**Prompt Sem Exemplos**: 
+```markdown
+Analise o feedback do cliente e classifique os problemas. Use estas categorias: 
+
+UI/UX, Desempenho, Solicitação de recurso, Integração, Preços e Outros. 
+
+Avalie também o sentimento (Positivo/Neutro/Negativo) e a prioridade (Alta/Média/Baixa).
+
+Aqui está o feedback: {{FEEDBACK}}
+```
+
+**Prompt Com Exemplos**:
+```markdown
+Nossa equipe de CS está sobrecarregada com feedback não estruturado. Sua tarefa é analisar feedback e categorizar problemas para nossas equipes de produto e engenharia. Use estas categorias: UI/UX, Desempenho, Solicitação de recurso, Integração, Preços e Outros. Avalie também o sentimento (Positivo/Neutro/Negativo) e a prioridade (Alta/Média/Baixa). Aqui está um exemplo:
+
+<exemplo>
+Entrada: O novo painel está uma bagunça! Demora uma eternidade para carregar e não consigo encontrar o botão de exportação. Corrija isso o mais rápido possível!
+Categoria: UI/UX, Desempenho
+Sentimento: Negativo
+Prioridade: alta
+</exemplo>
+
+Agora, analise este feedback: {{FEEDBACK}}
+```
+
+**Resposta (Prompt Sem Exemplos)**: 
+```markdown
+Aqui está a análise do feedback do cliente:
+
+Problema: UI/UX
+Sentimento: Negativo
+Prioridade: Alta
+O cliente está frustrado com o novo design do painel, que considera confuso e lento para carregar. Eles mencionam especificamente o botão “exportar” ausente, o que provavelmente é um recurso crítico. Esta questão precisa ser abordada como uma alta prioridade.
+
+Problema: Integração
+Sentimento: Positivo
+Prioridade: Média
+O cliente está satisfeito com a integração existente do Salesforce, mas também gostaria de ver suporte para o Hubspot. Esta é uma solicitação de recurso que pode ser considerada para uma atualização futura do produto.
+
+Problema: preços
+Sentimento: Negativo
+Prioridade: Alta
+O cliente considera o preço irracional, especialmente para os recursos básicos. Eles estão ameaçando mudar para um concorrente, então esta é uma questão de alta prioridade que precisa ser revista.
+
+Problema: Desempenho
+Sentimento Negativo
+Prioridade: Alta
+O cliente está enfrentando problemas críticos com o aplicativo móvel, onde uploads de arquivos grandes resultam consistentemente em falhas. Este é um problema significativo que afeta a capacidade do cliente de usar o produto de forma eficaz e deve ser tratado com alta prioridade.
+
+Problema: UI/UX
+Sentimento: Positivo
+Prioridade: Baixa
+O cliente está globalmente satisfeito com o produto, destacando especificamente a interface intuitiva e o excelente suporte ao cliente. Este é um feedback positivo que não requer nenhuma ação imediata.
+```
+
+**Resposta (Prompt Com Exemplos)**: 
+```markdown
+Aqui está a análise do feedback do cliente:
+
+1. O novo painel está uma bagunça! Demora uma eternidade para carregar e não consigo encontrar o botão de exportação. Corrija isso o mais rápido possível!
+Categoria: UI/UX, Desempenho
+Sentimento: Negativo
+Prioridade: Alta
+
+2. Adorei a integração do Salesforce! Mas seria ótimo se você pudesse adicionar o Hubspot também.
+Categoria: Integração, Solicitação de Recursos
+Sentimento: Positivo
+Prioridade: Média
+
+3. Seu preço é ridículo! US$ 99/mês para recursos básicos? Estou mudando para o Concorrente X.
+Categoria: Preços
+Sentimento: Negativo
+Prioridade: Alta
+
+4. O aplicativo móvel continua travando quando tento fazer upload de arquivos grandes (>50 MB). Isso é fundamental para nossos agentes de campo.
+Categoria: Desempenho
+Sentimento: Negativo
+Prioridade: Alta
+
+5. No geral, estou satisfeito com o produto. A IU é intuitiva e o suporte ao cliente é excelente. Mantem!
+Categoria: UI/UX, Outros (Suporte ao Cliente)
+Sentimento: Positivo
+Prioridade: Baixa
+
+```
+
+Observe que na versão “sem exemplos”, o modelo não lista múltiplas opções para cada categoria, apesar de sua análise escrita indicar que existem múltiplas categorias para determinado feedback. Ele também adiciona uma explicação desnecessária.
+
+# 4. Deixe o LLM pensar
 
 O conceito de "chain of thought" (CoT) frequentemente melhora o desempenho dos modelos LLM em tarefas complexas como pesquisa, análise ou resolução de problemas. Isso ocorre quando você dá "espaço para ele pensar", encorajando-o a quebrar o problema em partes menores e considerar as nuances dos resultados.
 
----
-
-O CoT é uma técnica poderosa, mas com grandes poderes vêm grandes responsabilidades.
+O CoT é uma técnica poderosa, mas precisa ser utilizada com alguma ponderações
 
 Vantagens:
 - Acurácia: resolver problemas passo a passo reduz a chance de erro, principalmente em tarefas complexas
@@ -57,61 +200,62 @@ Desvantagens:
 - Mais custo de tokens
 - Ganho marginal baixo: tarefas muito simples não precisam dessa estratégia; utilizá-la nesses casos pode gerar um ganho quase nulo para um custo muito alto
 
----
-
 ## CoT na prática:
 
-Ele pode ser implementado em níveis de complexidade crescente:
+Ele pode ser implementado em níveis de complexidade crescente
 
 ### Básico: Inclua "Pense passo a passo" no seu prompt
 **Exemplo:**
+
+```markdown
 Calcule o lucro líquido de uma loja que teve receita bruta de R$50.000, custos operacionais de R$30.000 e impostos de 15% sobre o lucro bruto. Pense passo a passo.
+```
 
 ### Intermediário: Mostre o passo a passo do "pensamento"
 **Exemplo:**
+```markdown
 Calcule o lucro líquido de uma loja que teve receita bruta de R$50.000, custos operacionais de R$30.000 e impostos de 15% sobre o lucro bruto. Siga estes passos:
 
-Calcule o lucro bruto (receita bruta - custos operacionais)
-Calcule o valor dos impostos (15% do lucro bruto)
-Calcule o lucro líquido (lucro bruto - impostos)
-Apresente o resultado final
-
-### Avançado: Use tags de pensamento e resposta
-**Exemplo:**
-Calcule o lucro líquido de uma loja que teve receita bruta de R$50.000, custos operacionais de R$30.000 e impostos de 15% sobre o lucro bruto.
-<pensamento>
-1. Calcular o lucro bruto:
-   Lucro bruto = Receita bruta - Custos operacionais
-   Lucro bruto = R$50.000 - R$30.000 = R$20.000
-
-Calcular o valor dos impostos:
-Impostos = 15% do lucro bruto
-Impostos = 0,15 * R$20.000 = R$3.000
-Calcular o lucro líquido:
-Lucro líquido = Lucro bruto - Impostos
-Lucro líquido = R$20.000 - R$3.000 = R$17.000
-</pensamento>
-
-
-<resposta>
-O lucro líquido da loja é de R$17.000.
-</resposta>
+1. Calcule o lucro bruto (receita bruta - custos operacionais)
+2. Calcule o valor dos impostos (15% do lucro bruto)
+3. Calcule o lucro líquido (lucro bruto - impostos)
+4. Apresente o resultado final
 ```
 
-# 4. Utilize tags XML
+### Avançado: Diga para o modelo utilizar tags de "pensamento"
+**Exemplo:**
 
-Quando o prompt tiver muitos componentes como contexto, instruções e exemplos, utilizar tags XML pode ser o "pulo do gato". Elas ajudam o LLM a separar as partes do seu prompt de maneira mais acurada, fornecendo respostas melhores.
+```markdown
+Elabore e-mails personalizados para doadores solicitando contribuições para o programa Care for Kids deste ano.
+
+Informações do programa:
+<programa>
+{{PROGRAM_DETAILS}}
+</programa>
+
+Informações do doador:
+<doador>
+{{DONOR_DETAILS}}
+</doador>
+
+Pense antes de escrever o e-mail, em tags de <pensamento>. Primeiro, pense em quais mensagens podem atrair esse doador, considerando seu histórico de doações e quais campanhas ele apoiou no passado. Em seguida, pense em quais aspectos do programa Care for Kids os atrairiam, dada a sua história. Por fim, escreva o e-mail personalizado do doador em tags <email>
+```
+
+O uso de tags de pensamento força o modelo a "enxergar" complexidade adicional no problema antes de gerar a resposta.
+# 5. Utilize tags XML
+
+Quando o prompt tiver muitos componentes como contexto, instruções, e exemplos, utilizar tags XML podem ser o diferencial do seu prompt. Elas ajudam o LLM a separar as partes do seu prompt de maneira mais acurada, fornecendo respostas melhores.
 
 Motivos para utilização:
 
 - Clareza: separar bem as partes do seu prompt, deixando-o mais bem estruturado
-- Acurácia: faz com que o modelo não entenda parte do seu prompt como coisas que não são (exemplo: confundir o texto com instrução de resposta)
-- Flexibilidade: seu prompt fica mais fácil de modificar, tirando a tag, trocando-as de ordem, etc.
-- Processamento: quando você utiliza tags XML, a resposta provavelmente também virá em tags, o que deixa o resultado mais fácil de processar via código
+- Acurácia: faz com que o modelo não entenda partes do seu prompt como coisas que não são (exemplo: confundir o texto com instruções com o texto de exemplo)
+- Flexibilidade: seu prompt fica mais fácil de modificar, tirando tags, trocando-as de ordem, etc.
+- Processamento: Ao utilizar tags XML, o texto fica mais fácil de ser processo via código, facilitando automações
 
 Melhores práticas:
 
-- Consistência: utilize sempre os mesmos nomes de tag em todos os seus prompts, e quando quiser referenciar algo que está em uma tag, fale sobre aquele algo usando o mesmo nome que o nome da tag
+- Consistência: utilize sempre os mesmos nomes de tag em todos os seus prompts, ao referenciar algo que está em uma tag, diga o nome diretamente.
 - Hierarquia: use tags aninhadas se o seu conteúdo for hierárquico
 
 Exemplo de um prompt estruturado com tags XML:
@@ -150,7 +294,7 @@ Por favor, estruture sua resposta usando as seguintes tags:
 </instrucoes_adicionais>
 ```
 
-# 5. Dê uma "persona" ao LLM
+# 6. Dê uma "persona" ao LLM
 
 Ao utilizar um LLM, é possível aumentar sua performance de forma significativa utilizando o parâmetro "system". Essa técnica é conhecida como "Role prompting".
 
@@ -158,7 +302,7 @@ Vantagens:
 
 - Melhora da acurácia: Em cenários complexos, dar uma persona pode melhorar muito a performance do modelo, pois a persona adequada gera uma aproximação semântica e contextual imediata com o problema sendo resolvido
 - Adequação da linguagem: A persona correta irá produzir outputs na linguagem adequada
-- Melhora do escopo: A persona correta tende a manter a resposta dentro dos limites esperados de resposta
+- Melhora do escopo: A persona correta tende a manter a resposta dentro dos limites esperados
 
 Esse tipo de estratégia pode ser utilizada diretamente no parâmetro de "system" da API:
 
@@ -170,7 +314,7 @@ client = anthropic.Anthropic()
 response = client.messages.create(
     model="claude-3-5-sonnet-20240620",
     max_tokens=2048,
-    system="Você é um cientista de dados experiente em uma empresa do Fortune 500.", # <-- role prompt
+    system="Você é um cientista de dados experiente em uma empresa listada na Bolsa", # <-- role prompt
     messages=[
         {"role": "user", "content": "Analise este conjunto de dados em busca de anomalias: <dataset>{{DATASET}}</dataset>"}
     ]
@@ -179,8 +323,9 @@ response = client.messages.create(
 print(response.content)
 ```
     
-Mas também pode ser utilizado de maneira mais casual, diretamente no texto do prompt. Aqui está um exemplo:
+Essa técnica também pode ser utilizada diretamente no prompt. Aqui está um exemplo:
 
+```markdown
 Persona: Você é um especialista em marketing digital com 15 anos de experiência em campanhas para e-commerce no Brasil.
 
 Tarefa: Analise os seguintes dados de uma campanha recente de marketing para uma loja online de eletrônicos:
@@ -200,14 +345,14 @@ Com base nesses dados, por favor:
 3. Sugira 3 melhorias específicas para futuras campanhas
 
 Formate sua resposta em tópicos claros e concisos, utilizando termos técnicos de marketing digital quando apropriado.
+```
 
-# 6. "Prefilling", ou Pré-preenchimento
+# 7. "Prefilling", ou Pré-preenchimento
 
 Ao utilizar um modelo LLM, é possível guiar suas respostas dando uma "previsão" de sua resposta. Isso direciona a resposta do modelo para que ela:
 
 1. Fique dentro dos formatos desejados
 2. Pule descrições desnecessárias
-3. Mantenha a "persona" enquanto o chat continua
 
 Essa técnica pode ser utilizada diretamente na API:
 
@@ -225,8 +370,10 @@ response = client.messages.create(
 )
 ```
 
-A técnica também pode ser utilizada diretamente no chat. Aqui está um exemplo em português:
+A técnica também pode ser utilizada diretamente no chat. Aqui está um exemplo:
 
+**Prompt com pré preenchimento:**
+```markdown
 Usuário: Extraia o nome, tamanho, preço e cor desta descrição de produto como um objeto JSON:
 
 <descricao>
@@ -234,20 +381,25 @@ O CasaInteligente Mini é um assistente doméstico compacto disponível nas core
 </descricao>
 
 Assistente (pré-preenchimento): {
-Resposta do Assistente:
+```
+
+
+**Resposta ao prompt com pré preenchimento:**
+```markdown
 { "nome": "CasaInteligente Mini", "tamanho": "13 cm de largura", "preco": "R$ 299,90", "cor": ["preto", "branco"] }
+```
 
-Esse tipo de otimização se torna especialmente importante em cenários produtivos, onde a economia de tokens é crucial.
+Esse tipo de otimização é muito importante em cenários produtivos, onde a economia de tokens é crucial.
 
-# 7. "Chaining" ou Encadeamento
+# 8. "Chaining" ou Encadeamento
 
-Ao lidar com problemas complexos, modelos LLM podem se perder se receberem um prompt muito grande com muitas tarefas. O processo de encadeamento tem o poder de quebrar uma tarefa complexa em tarefas menores, mais fáceis de resolver.
+Ao lidar com problemas complexos, modelos LLM podem se perder se receberem um prompt muito grande, com muitas tarefas. O processo de encadeamento tem o poder de quebrar uma tarefa complexa em tarefas menores, mais fáceis de resolver.
 
 Vantagens:
 
-1. Acurácia: cada tarefa recebe atenção total do modelo, reduzindo os erros
-2. Clareza: tarefas menores geram instruções mais claras e outputs mais precisos
-3. Rastreabilidade: é mais fácil perceber erros isolados e corrigi-los
+1. Acurácia: cada tarefa recebe atenção total do modelo, reduzindo os erros.
+2. Clareza: tarefas menores geram instruções mais claras e outputs mais precisos.
+3. Rastreabilidade: é mais fácil perceber erros isolados na reposta do modelo e corrigi-los (melhora do prompt).
 
 Quando utilizar?
 
@@ -264,67 +416,130 @@ Como fazer?
 3. Faça com que cada tarefa tenha um único retorno, com um objetivo claro
 4. Itere: Refine as subtarefas baseado na qualidade das respostas do modelo
 
----
 
-## Avançado: "Encadeamento auto-corretivo"
-
-É possível encadear um prompt ao outro para fazer com que o modelo revise a própria resposta. Aqui está um exemplo adaptado ao contexto brasileiro:
-
-### Prompt 1
-
-**Usuário**: Resuma este artigo sobre uma nova política pública de saúde. <artigo>{{ARTIGO_POLITICA_SAUDE}}</artigo> Foque na metodologia, resultados e implicações para o SUS.
-
-**Assistente**: [O assistente fornece um resumo do artigo]
-
-### Prompt 2
-
-**Usuário**: Sua tarefa é fornecer feedback sobre um resumo de artigo de política pública de saúde. Aqui está o resumo: <resumo>{{RESUMO}}</resumo> Aqui está o artigo original: <artigo>{{ARTIGO_POLITICA_SAUDE}}</artigo> Revise este resumo quanto à precisão, clareza e completude em uma escala de A a F.
-
-**Assistente**: [O assistente fornece feedback detalhado sobre o resumo]
-
-### Prompt 3
-
-**Usuário**: Sua tarefa é melhorar um resumo de artigo com base no feedback recebido. Aqui está o primeiro rascunho do resumo: <resumo>{{RESUMO}}</resumo> Aqui está o artigo original: <artigo>{{ARTIGO_POLITICA_SAUDE}}</artigo> Aqui está o feedback: <feedback>{{FEEDBACK}}</feedback> Atualize o resumo com base no feedback.
-
-**Assistente**: [O assistente fornece uma versão atualizada e melhorada do resumo]
-
----
 
 ## Exemplo de Encadeamento (CoT)
 
-Vamos ver um exemplo de encadeamento aplicado a um contexto empresarial brasileiro:
+Vamos ver um exemplo de encadeamento aplicado a um contexto empresarial complexo, de análise contratual:
 
 ### Prompt 1
+**Usuário**: 
+```
+Você é nosso Diretor Jurídico. Revise este contrato de fornecimento de software como serviço (SaaS) para riscos, focando em privacidade de dados, SLAs e limites de responsabilidade. 
 
-**Usuário**: Você é nosso Diretor Jurídico. Revise este contrato de fornecimento de software como serviço (SaaS) para riscos, focando em privacidade de dados, SLAs e limites de responsabilidade. <contrato>{{CONTRATO}}</contrato> Apresente suas conclusões em tags <riscos>.
+<contrato>{{CONTRATO}}</contrato> 
 
-**Assistente**: [O assistente fornece uma análise detalhada dos riscos do contrato]
+Apresente suas conclusões em tags <riscos>.
+```
+
+**Assistente**: 
+```
+[O assistente fornece uma análise detalhada dos riscos do contrato]
+```
 
 ### Prompt 2
 
-**Usuário**: Redija um e-mail para o fornecedor de SaaS destacando as seguintes preocupações e propondo mudanças. Aqui estão as preocupações: <preocupacoes>{{PREOCUPACOES}}</preocupacoes>
+**Usuário**: 
+```
+Redija um e-mail para o fornecedor de SaaS destacando as seguintes preocupações e propondo mudanças. 
 
-**Assistente**: [O assistente redige um e-mail detalhando as preocupações e propondo mudanças]
+Aqui estão as preocupações: 
+
+<preocupacoes>{{RESPOSTA DO MODELO ANTERIOR}}</preocupacoes>
+```
+
+**Assistente**: 
+```
+[O assistente redige um e-mail detalhando as preocupações e propondo mudanças]
+```
 
 ### Prompt 3
+**Usuário**: 
+```
+Sua tarefa é revisar um e-mail e fornecer feedback. 
 
-**Usuário**: Sua tarefa é revisar um e-mail e fornecer feedback. Aqui está o e-mail: <email>{{EMAIL}}</email> Dê feedback sobre o tom, clareza e profissionalismo.
+Aqui está o e-mail: 
+<email>{{RESPOSTA DO MODELO ANTERIOR}}</email>
 
-**Assistente**: [O assistente fornece feedback detalhado sobre o e-mail]
+Dê feedback sobre o tom, clareza e profissionalismo.
+```
 
-Neste exemplo, o pensamento encadeado foi utilizado para que o modelo primeiro identificasse os riscos no contrato, em seguida redigisse um e-mail propondo as mudanças a serem feitas nesse contrato, e por último, revisasse o tom e a formalidade deste e-mail. Em testes onde as tarefas são pedidas todas juntas, o modelo frequentemente esquece algumas delas e acaba não propondo mudanças de contrato.
+**Assistente**: 
+```
+[O assistente fornece feedback detalhado sobre o e-mail]
+```
+
+Neste exemplo, o pensamento encadeado foi utilizado para que o modelo primeiro identificasse os riscos no contrato, em seguida redigisse um e-mail propondo as mudanças a serem feitas nesse contrato, e por último, revisasse o tom e a formalidade deste e-mail. Em testes onde as tarefas são pedidas todas juntas, o modelo frequentemente esquece algum dos passos.
+
+
+## Avançado: "Encadeamento auto-corretivo"
+É possível encadear um prompt ao outro para fazer com que o modelo revise a própria resposta. Aqui está um exemplo adaptado ao contexto brasileiro:
+
+### Prompt 1
+```
+Resuma este artigo sobre uma nova política pública de saúde. 
+
+<artigo>{{ARTIGO_POLITICA_SAUDE}}</artigo> 
+
+Foque na metodologia, resultados e implicações para o SUS.
+```
+
+**Assistente**: 
+```
+[O assistente fornece um resumo do artigo]
+```
+
+### Prompt 2
+```
+Sua tarefa é fornecer feedback sobre um resumo de artigo de política pública de saúde. 
+
+Aqui está o resumo: 
+<resumo>
+{{RESUMO}}
+</resumo> 
+
+Aqui está o artigo original: 
+<artigo>
+{{RESPOSTA DO MODELO ANTERIOR}}
+</artigo> 
+
+Revise este resumo quanto à precisão, clareza e completude em uma escala de A a F.
+```
+
+**Assistente**:
+```
+[O assistente fornece feedback detalhado sobre o resumo]
+```
+
+### Prompt 3
+```
+
+Sua tarefa é melhorar um resumo de artigo com base no feedback recebido. 
+
+Aqui está o primeiro rascunho do resumo: 
+<resumo>{{RESUMO}}</resumo>
+
+Aqui está o artigo original: 
+<artigo>{{ARTIGO_POLITICA_SAUDE}}</artigo> 
+
+Aqui está o feedback: <feedback>{{RESPOSTA DO MODELO ANTERIOR}}</feedback> 
+
+Atualize o resumo com base no feedback.
+```
+
+**Assistente**: 
+```
+[O assistente fornece uma versão atualizada e melhorada do resumo]
+```
+
     
-# 8. Dicas para Prompts Extensos
-Ao trabalhar com prompts que contêm muitas informações, considere estas estratégias para melhorar os resultados:
+# 9. Dicas para Prompts Extensos
+Ao trabalhar com prompts que contêm muitas informações, considere estas estratégias:
 
-- 1. Priorize os Dados
-Por quê? As IAs de linguagem atuais tendem a processar melhor as informações colocadas no início do prompt.
-Como fazer: Coloque os dados mais importantes ou extensos no topo do seu prompt, seguidos pelas instruções ou perguntas.
-Benefício: Aumenta a precisão da resposta em até 30%.
+- 1. Priorize os Dados: Até a data de hoje (03/10/2024) LLM's de linguagem tendem a processar melhor as informações colocadas no início do prompt.
 
-- 2. Estruture com XML
-Por quê? Organizar as informações em uma estrutura clara ajuda a IA a entender e processar melhor os dados.
-Como fazer: Use tags XML para separar e identificar diferentes partes do seu prompt, especialmente ao lidar com múltiplos documentos ou fontes de dados.
+- 2. Estruture com XML: Especialmente em prompts grandes organizar as informações em uma estrutura clara ajuda o modelo a entender e processar melhor os dados. Uma estrutura hierarquica de tags XML também é preferível.
+
 Exemplo:
 
 ```xml
@@ -342,12 +557,13 @@ Exemplo:
     </conteudo>
   </documento>
 </documentos>
+
+<tarefa>
+Analise o relatório anual e a análise de concorrentes. Identifique vantagens estratégicas e recomende áreas de foco para o 3º trimestre.
+</tarefa>
 ```
 
-Analise o relatório anual e a análise de concorrentes. Identifique vantagens estratégicas e recomende áreas de foco para o 3º trimestre.
-
-
-# 9. Dica “Bônus”
+# 10. Dica “Bônus”
 
 Nesse link, é possível encontrar uma grande diversidade de exemplos de prompts bem estruturados, seguindo muitas das práticas aqui descritas, eles podem ser utilizados de inspiração para seus prompts:
 
