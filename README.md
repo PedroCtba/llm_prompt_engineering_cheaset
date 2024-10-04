@@ -185,7 +185,7 @@ Prioridade: Baixa
 
 Observe que na versão “sem exemplos”, o modelo não lista múltiplas opções para cada categoria, apesar de sua análise escrita indicar que existem múltiplas categorias para determinado feedback. Ele também adiciona uma explicação desnecessária.
 
-# 4. Deixe o LLM pensar
+# 3. Deixe o LLM pensar
 
 O conceito de "chain of thought" (CoT) frequentemente melhora o desempenho dos modelos LLM em tarefas complexas como pesquisa, análise ou resolução de problemas. Isso ocorre quando você dá "espaço para ele pensar", encorajando-o a quebrar o problema em partes menores e considerar as nuances dos resultados.
 
@@ -242,7 +242,7 @@ Pense antes de escrever o e-mail, em tags de <pensamento>. Primeiro, pense em qu
 ```
 
 O uso de tags de pensamento força o modelo a "enxergar" complexidade adicional no problema antes de gerar a resposta.
-# 5. Utilize tags XML
+# 4. Utilize tags XML
 
 Quando o prompt tiver muitos componentes como contexto, instruções, e exemplos, utilizar tags XML podem ser o diferencial do seu prompt. Elas ajudam o LLM a separar as partes do seu prompt de maneira mais acurada, fornecendo respostas melhores.
 
@@ -294,7 +294,7 @@ Por favor, estruture sua resposta usando as seguintes tags:
 </instrucoes_adicionais>
 ```
 
-# 6. Dê uma "persona" ao LLM
+# 5. Dê uma "persona" ao LLM
 
 Ao utilizar um LLM, é possível aumentar sua performance de forma significativa utilizando o parâmetro "system". Essa técnica é conhecida como "Role prompting".
 
@@ -347,7 +347,7 @@ Com base nesses dados, por favor:
 Formate sua resposta em tópicos claros e concisos, utilizando termos técnicos de marketing digital quando apropriado.
 ```
 
-# 7. "Prefilling", ou Pré-preenchimento
+# 6. "Prefilling", ou Pré-preenchimento
 
 Ao utilizar um modelo LLM, é possível guiar suas respostas dando uma "previsão" de sua resposta. Isso direciona a resposta do modelo para que ela:
 
@@ -391,7 +391,7 @@ Assistente (pré-preenchimento): {
 
 Esse tipo de otimização é muito importante em cenários produtivos, onde a economia de tokens é crucial.
 
-# 8. "Chaining" ou Encadeamento
+# 7. "Chaining" ou Encadeamento
 
 Ao lidar com problemas complexos, modelos LLM podem se perder se receberem um prompt muito grande, com muitas tarefas. O processo de encadeamento tem o poder de quebrar uma tarefa complexa em tarefas menores, mais fáceis de resolver.
 
@@ -533,7 +533,7 @@ Atualize o resumo com base no feedback.
 ```
 
     
-# 9. Dicas para Prompts Extensos
+# 8. Dicas para Prompts Extensos
 Ao trabalhar com prompts que contêm muitas informações, considere estas estratégias:
 
 - 1. Priorize os Dados: Até a data de hoje (03/10/2024) LLM's de linguagem tendem a processar melhor as informações colocadas no início do prompt.
@@ -563,7 +563,7 @@ Analise o relatório anual e a análise de concorrentes. Identifique vantagens e
 </tarefa>
 ```
 
-# 10. Dica “Bônus”
+# 9. Dica “Bônus”
 
 Nesse link, é possível encontrar uma grande diversidade de exemplos de prompts bem estruturados, seguindo muitas das práticas aqui descritas, eles podem ser utilizados de inspiração para seus prompts:
 
