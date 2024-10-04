@@ -536,9 +536,8 @@ Atualize o resumo com base no feedback.
 # 8. Dicas para Prompts Extensos
 Ao trabalhar com prompts que contêm muitas informações, considere estas estratégias:
 
-- 1. Priorize os Dados: Até a data de hoje (03/10/2024) LLM's de linguagem tendem a processar melhor as informações colocadas no início do prompt.
-
-- 2. Estruture com XML: Especialmente em prompts grandes organizar as informações em uma estrutura clara ajuda o modelo a entender e processar melhor os dados. Uma estrutura hierarquica de tags XML também é preferível.
+1. Priorize os Dados: Até a data de hoje (03/10/2024) LLM's de linguagem tendem a processar melhor as informações colocadas no início do prompt.
+2. Estruture com XML: Especialmente em prompts grandes organizar as informações em uma estrutura clara ajuda o modelo a entender e processar melhor os dados. Uma estrutura hierarquica de tags XML também é preferível.
 
 Exemplo:
 
