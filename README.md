@@ -427,7 +427,7 @@ Vamos ver um exemplo de encadeamento aplicado a um contexto empresarial complexo
 ```
 Você é nosso Diretor Jurídico. Revise este contrato de fornecimento de software como serviço (SaaS) para riscos, focando em privacidade de dados, SLAs e limites de responsabilidade. 
 
-<contrato>{{CONTRATO}}</contrato> 
+<contrato>[CONTRATO]</contrato> 
 
 Apresente suas conclusões em tags <riscos>.
 ```
@@ -445,7 +445,7 @@ Redija um e-mail para o fornecedor de SaaS destacando as seguintes preocupaçõe
 
 Aqui estão as preocupações: 
 
-<preocupacoes>{{RESPOSTA DO MODELO ANTERIOR}}</preocupacoes>
+<preocupacoes>[RESPOSTA DO MODELO ANTERIOR]</preocupacoes>
 ```
 
 **Assistente**: 
@@ -459,7 +459,7 @@ Aqui estão as preocupações:
 Sua tarefa é revisar um e-mail e fornecer feedback. 
 
 Aqui está o e-mail: 
-<email>{{RESPOSTA DO MODELO ANTERIOR}}</email>
+<email>[RESPOSTA DO MODELO ANTERIOR]</email>
 
 Dê feedback sobre o tom, clareza e profissionalismo.
 ```
