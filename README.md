@@ -1,10 +1,10 @@
-# Guia Prático de Prompt Engineering: Otimizando suas Interações com LLM's
+# Cheaset Prática de Prompt Engineering
 
-Antes de falar sobre Prompt Engineering, vale uma observação de quando aplicá-lo. Nem todos os desafios com LLM's podem ser resolvidos apenas com ajuste de prompts - alguns desafions como modelos com baixa aderência a uma língua incomun, latência na geração de reposta, e etc. Requerem mudanças mais "sistemáticas". No entanto, esse tipo de desafio é mais incomun, e na maioria dos casos, o Prompt Engineering oferece uma solução rápida, eficaz e de fácil manutenção, que aproveita a estrutura existente.
+Antes de utilizar essa cheaset, vale uma observação sobre técnicas de Prompt Engineering. Nem todos os desafios envolvendo LLM's podem ser resolvidos apenas com ajuste de prompts - alguns desafions como modelos com baixa aderência a uma língua incomun,  latência na geração de reposta, etc. Requerem mudanças mais "sistemáticas". Porém, esse tipo de desafio é mais incomun, e na maioria dos casos, técnicas Prompt Engineering oferece uma solução rápida, eficaz e de fácil manutenção, que aproveita a estrutura existente.
 
 Importante: É fundamental que você possa medir e comprovar a melhoria do desempenho do modelo após cada ajuste feito com técnicas de Prompt Engineering. Tendo em vista a natureza heurística dos LLM's, onde não necessesariamente técnicas mais complexas geram resultados melhores.
 
-A seguir, irei apresentar uma lista de ações para aprimorar a eficácia dos seus prompts, organizadas por ordem de importância. Para tarefas de menor prioridade ou não destinadas à produção, os primeiros passos geralmente são suficientes:
+Essa lista de ações é baseada no manual de prompt engineering da anthropic, e estão organizadas por ordem de importância. Para tarefas de menor prioridade ou não destinadas à produção, os primeiros passos geralmente são suficientes:
     
 # 1. Seja claro, direto e detalhado
 
@@ -568,3 +568,7 @@ Analise o relatório anual e a análise de concorrentes. Identifique vantagens e
 Nesse link, é possível encontrar uma grande diversidade de exemplos de prompts bem estruturados, seguindo muitas das práticas aqui descritas, eles podem ser utilizados de inspiração para seus prompts:
 
 https://docs.anthropic.com/en/prompt-library/library
+
+
+**Referências:**
+- https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview
