@@ -1,10 +1,10 @@
 # Cheaset Prática de Prompt Engineering
 
-Antes de utilizar essa cheaset, vale uma observação sobre técnicas de Prompt Engineering. Nem todos os desafios envolvendo LLM's podem ser resolvidos apenas com ajuste de prompts - alguns desafions como modelos com baixa aderência a uma língua incomun,  latência na geração de reposta, etc. Requerem mudanças mais "sistemáticas". Porém, esse tipo de desafio é mais incomun, e na maioria dos casos, técnicas Prompt Engineering oferece uma solução rápida, eficaz e de fácil manutenção, que aproveita a estrutura existente.
+Antes de utilizar essa cheaset, vale uma observação sobre técnicas de Prompt Engineering. Nem todos os desafios envolvendo LLM's podem ser resolvidos apenas com ajuste de prompts - alguns desafios, como modelos com baixa aderência a uma língua incomun,  latência na geração de reposta, etc., requerem mudanças mais "sistemáticas". Porém, esse tipo de desafio é mais incomum, e na maioria dos casos, técnicas Prompt Engineering oferecem uma solução rápida, eficaz e de fácil manutenção, que aproveita a estrutura existente.
 
-Importante: É fundamental que você possa medir e comprovar a melhoria do desempenho do modelo após cada ajuste feito com técnicas de Prompt Engineering. Tendo em vista a natureza heurística dos LLM's, onde não necessesariamente técnicas mais complexas geram resultados melhores.
+Importante: É fundamental que você possa medir e comprovar a melhoria do desempenho do modelo após cada ajuste feito com técnicas de Prompt Engineering. Tendo em vista a natureza heurística dos LLM's, onde não necessariamente técnicas mais complexas geram resultados melhores.
 
-Essa lista de ações é baseada no manual de prompt engineering da anthropic, e estão organizadas por ordem de importância. Para tarefas de menor prioridade ou não destinadas à produção, os primeiros passos geralmente são suficientes:
+Essa lista de ações é baseada no manual de prompt engineering da anthropic, e está organizada por ordem de importância. Para tarefas de menor prioridade ou não destinadas à produção, os primeiros passos geralmente são suficientes:
     
 # 1. Seja claro, direto e detalhado
 
@@ -399,7 +399,7 @@ Vantagens:
 
 1. Acurácia: cada tarefa recebe atenção total do modelo, reduzindo os erros.
 2. Clareza: tarefas menores geram instruções mais claras e outputs mais precisos.
-3. Rastreabilidade: é mais fácil perceber erros isolados na reposta do modelo e corrigi-los (melhora do prompt).
+3. Rastreabilidade: é mais fácil perceber erros isolados na resposta do modelo e corrigi-los (melhora do prompt).
 
 Quando utilizar?
 
