@@ -391,18 +391,15 @@ Assistente (pré-preenchimento): {
 
 Esse tipo de otimização é muito importante em cenários produtivos, onde a economia de tokens é crucial.
 
-# 7. "Chaining" ou Encadeamento
-
-Ao lidar com problemas complexos, modelos LLM podem se perder se receberem um prompt muito grande, com muitas tarefas. O processo de encadeamento tem o poder de quebrar uma tarefa complexa em tarefas menores, mais fáceis de resolver.
+# 7. Chain-of-Thought recursivo
+Como vimos no passo **3** desse guia, é comum fazer o modelo pensar para que ele chegue ao resultado esperado, dividindo tarefas complexas em várias partes. Aqui, isso é levado a outro patamar, onde o modelo além de pensar sobre tarefas complexas, ainda faz revisões sobre o próprio desempenho. Afím de dividir uma tarefa extremamente complexa em partes ainda menores, sendo resolvidas em vários prompts.
 
 Vantagens:
-
 1. Acurácia: cada tarefa recebe atenção total do modelo, reduzindo os erros.
 2. Clareza: tarefas menores geram instruções mais claras e outputs mais precisos.
 3. Rastreabilidade: é mais fácil perceber erros isolados na resposta do modelo e corrigi-los (melhora do prompt).
 
 Quando utilizar?
-
 - **Análise multi-etapas**: Veja os exemplos jurídicos e de negócios abaixo.
 - **Pipelines de criação de conteúdo**: Pesquisa → Esquema → Rascunho → Edição → Formatação.
 - **Processamento de dados**: Extração → Transformação → Análise → Visualização.
@@ -416,9 +413,7 @@ Como fazer?
 3. Faça com que cada tarefa tenha um único retorno, com um objetivo claro
 4. Itere: Refine as subtarefas baseado na qualidade das respostas do modelo
 
-
-
-## Exemplo de Encadeamento (CoT)
+## Exemplo de Encadeamento
 
 Vamos ver um exemplo de encadeamento aplicado a um contexto empresarial complexo, de análise contratual:
 
@@ -470,7 +465,6 @@ Dê feedback sobre o tom, clareza e profissionalismo.
 ```
 
 Neste exemplo, o pensamento encadeado foi utilizado para que o modelo primeiro identificasse os riscos no contrato, em seguida redigisse um e-mail propondo as mudanças a serem feitas nesse contrato, e por último, revisasse o tom e a formalidade deste e-mail. Em testes onde as tarefas são pedidas todas juntas, o modelo frequentemente esquece algum dos passos.
-
 
 ## Avançado: "Encadeamento auto-corretivo"
 É possível encadear um prompt ao outro para fazer com que o modelo revise a própria resposta. Aqui está um exemplo adaptado ao contexto brasileiro:
@@ -532,8 +526,55 @@ Atualize o resumo com base no feedback.
 [O assistente fornece uma versão atualizada e melhorada do resumo]
 ```
 
-    
-# 8. Dicas para Prompts Extensos
+# 8. Técnica ReAct (Reasoning and Acting)
+A técnica ReAct, ou "Raciocínio e Ação", é uma abordagem que combina raciocínio lógico com ações incrementais, permitindo que o modelo não apenas forneça respostas, mas execute tarefas complexas que envolvem várias etapas. Isso é particularmente útil em cenários que exigem uma série de ações encadeadas antes de se chegar a uma resposta.
+
+Por exemplo, quando o modelo é instruído a "pesquisar" ou "descobrir" informações, ele divide a tarefa em uma sequência de ações, onde cada ação depende do raciocínio anterior. Esse processo iterativo de raciocínio é chamado de Chain of Thought (CoT), e já foi descrito, mas aqui, ele é combinado com ações.
+
+Devido a essa natureza, é comum que essa técnica só possa ser implementada em aplicações onde o LLM possuí um toolkit, que ele pode usar para realizar as ações.
+
+Como funciona?
+O processo de ReAct em um cenário de pesquisa pode ser dividido em:
+
+1. Raciocínio (Reasoning): O modelo primeiro avalia a pergunta e explica qual será sua estratégia de pesquisa ou análise.
+2. Ação (Acting): A cada passo, o modelo realiza uma ação concreta — como buscar uma fonte de informação, interpretar dados ou ajustar a consulta — e registra o resultado. O raciocínio e a ação continuam até que o objetivo seja alcançado.
+
+Exemplo de prompt ReAct (com pesquisa)
+```
+Sua tarefa é descobrir quantos prêmios Nobel foram ganhos por mulheres até hoje. Explique como você irá realizar essa pesquisa e forneça a resposta com base nas fontes encontradas.
+```
+
+```
+<raciocínio>
+Primeiro, eu preciso buscar uma fonte confiável que lista todos os prêmios Nobel concedidos até o momento. Depois, filtrarei os resultados para identificar quantos foram ganhos por mulheres.
+</raciocínio>
+
+<ação>
+Vou começar pesquisando no site oficial do Nobel, pois ele deve ter a lista completa de laureados. Pesquisando "total Nobel laureates by gender site:nobelprize.org".
+</ação>
+
+<resultado_pesquisa>
+Encontrei a página oficial do Nobel com uma lista de todos os ganhadores ao longo dos anos. Agora preciso encontrar um filtro por gênero ou analisar individualmente a lista para contar quantas mulheres ganharam.
+</resultado_pesquisa>
+
+<raciocínio>
+A página oficial do Nobel oferece um filtro por gênero, então posso usar essa funcionalidade para contar quantas mulheres foram premiadas.
+</raciocínio>
+
+<ação>
+Aplicar o filtro por gênero feminino na lista de laureados.
+</ação>
+
+<resultado_pesquisa>
+Encontrei o número de prêmios Nobel ganhos por mulheres: até 2024, 61 mulheres receberam o prêmio Nobel.
+</resultado_pesquisa>
+
+<resposta_final>
+Até o momento, 61 mulheres foram premiadas com o Nobel.
+</resposta_final>
+```
+
+# 9. Dicas para Prompts Extensos
 Ao trabalhar com prompts que contêm muitas informações, considere estas estratégias:
 
 1. Priorize os Dados: Até a data de hoje (03/10/2024) LLM's de linguagem tendem a processar melhor as informações colocadas no início do prompt.
@@ -561,13 +602,12 @@ Exemplo:
 Analise o relatório anual e a análise de concorrentes. Identifique vantagens estratégicas e recomende áreas de foco para o 3º trimestre.
 </tarefa>
 ```
-
-# 9. Dica “Bônus”
+  
+# 10. Dica “Bônus”
 
 Nesse link, é possível encontrar uma grande diversidade de exemplos de prompts bem estruturados, seguindo muitas das práticas aqui descritas, eles podem ser utilizados de inspiração para seus prompts:
 
 https://docs.anthropic.com/en/prompt-library/library
-
 
 **Referências:**
 - https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview
