@@ -185,7 +185,7 @@ Prioridade: Baixa
 
 Observe que na versão “sem exemplos”, o modelo não lista múltiplas opções para cada categoria, apesar de sua análise escrita indicar que existem múltiplas categorias para determinado feedback. Ele também adiciona uma explicação desnecessária.
 
-# 3. Deixe o LLM pensar
+# 3. Deixe o LLM pensar (Chain of thought)
 
 O conceito de "chain of thought" (CoT) frequentemente melhora o desempenho dos modelos LLM em tarefas complexas como pesquisa, análise ou resolução de problemas. Isso ocorre quando você dá "espaço para ele pensar", encorajando-o a quebrar o problema em partes menores e considerar as nuances dos resultados.
 
