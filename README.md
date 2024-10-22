@@ -543,7 +543,7 @@ Exemplo de prompt ReAct (com pesquisa)
 ```
 Sua tarefa é descobrir quantos prêmios Nobel foram ganhos por mulheres até hoje. Explique como você irá realizar essa pesquisa e forneça a resposta com base nas fontes encontradas.
 ```
-
+Resposta:
 ```
 <raciocínio>
 Primeiro, eu preciso buscar uma fonte confiável que lista todos os prêmios Nobel concedidos até o momento. Depois, filtrarei os resultados para identificar quantos foram ganhos por mulheres.
